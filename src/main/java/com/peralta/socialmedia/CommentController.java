@@ -25,7 +25,7 @@ public class CommentController {
         if (post != null) {
             return commentRepository.findByPost(post);
         }
-        return List.of();
+        return List.of(); // Return empty list if post not found
     }
 
     // Create a new comment
@@ -36,8 +36,22 @@ public class CommentController {
             comment.setPost(post);
         }
         comment.setTimestamp(LocalDateTime.now());
+        // Do NOT overwrite or ignore author; it's set from frontend
         return commentRepository.save(comment);
     }
 
-    // ... (other methods)
+    // Update a comment
+    @PutMapping("/{id}")
+    public Comment updateComment(@PathVariable Long id, @Valid @RequestBody Comment updatedComment) {
+        return commentRepository.findById(id).map(existing -> {
+            existing.setContent(updatedComment.getContent());
+            return commentRepository.save(existing);
+        }).orElse(null);
+    }
+
+    // Delete a comment
+    @DeleteMapping("/{id}")
+    public void deleteComment(@PathVariable Long id) {
+        commentRepository.deleteById(id);
+    }
 }
