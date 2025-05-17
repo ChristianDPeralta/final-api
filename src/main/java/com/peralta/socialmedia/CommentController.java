@@ -1,6 +1,6 @@
 package com.peralta.socialmedia;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,7 +12,7 @@ public class Comment {
 
     private String content;
 
-    private String author; // <--- Add this field
+    private String author;
 
     private LocalDateTime timestamp;
 
@@ -20,48 +20,19 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    // ... any other fields, constructors, etc.
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    // --- GETTERS AND SETTERS ---
-    public Long getId() {
-        return id;
-    }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getAuthor() { return author; }
+    public void setAuthor(String author) { this.author = author; }
 
-    public String getContent() {
-        return content;
-    }
+    public LocalDateTime getTimestamp() { return timestamp; }
+    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getAuthor() { // <--- Add this getter
-        return author;
-    }
-
-    public void setAuthor(String author) { // <--- Add this setter
-        this.author = author;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    // Add any other getters/setters if you have more fields
+    public Post getPost() { return post; }
+    public void setPost(Post post) { this.post = post; }
 }
