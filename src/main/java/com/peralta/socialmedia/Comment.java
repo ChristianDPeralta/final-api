@@ -5,19 +5,21 @@ import java.time.LocalDateTime;
 
 @Entity
 public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String content;
-    private String author; // if you want to store the commenter name
+    private String author; // <-- This will store the user's display name
+
     private LocalDateTime timestamp;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
 
-    // Getters and setters...
+    // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
