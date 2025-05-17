@@ -1,37 +1,43 @@
 package com.peralta.socialmedia;
 
-import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Entity
-public class Comment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@RestController
+@RequestMapping("/api/comments")
+@CrossOrigin(origins = "*") // For dev only; restrict in prod
+public class CommentController {
 
-    @ManyToOne
-    @JoinColumn(name = "user_id") // Will reference 'users' table because of User.java
-    private User user;
+    @Autowired
+    private CommentRepository commentRepository;
+    
+    @Autowired
+    private PostRepository postRepository;
 
-    @ManyToOne
-    private Post post;
+    // Get all comments for a specific post
+    @GetMapping("/post/{postId}")
+    public List<Comment> getCommentsByPost(@PathVariable Long postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post != null) {
+            return commentRepository.findByPost(post);
+        }
+        return List.of();
+    }
 
-    private String content;
-    private LocalDateTime timestamp;
+    // Create a new comment
+    @PostMapping
+    public Comment createComment(@Valid @RequestBody Comment comment) {
+        if (comment.getPost() != null && comment.getPost().getId() != null) {
+            Post post = postRepository.findById(comment.getPost().getId()).orElse(null);
+            comment.setPost(post);
+        }
+        comment.setTimestamp(LocalDateTime.now());
+        return commentRepository.save(comment);
+    }
 
-    // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-
-    public Post getPost() { return post; }
-    public void setPost(Post post) { this.post = post; }
-
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
-
-    public LocalDateTime getTimestamp() { return timestamp; }
-    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+    // ... (other methods)
 }
