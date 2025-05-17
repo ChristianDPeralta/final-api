@@ -10,6 +10,7 @@ public class Comment {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id") // Will reference 'users' table because of User.java
     private User user;
 
     @ManyToOne
