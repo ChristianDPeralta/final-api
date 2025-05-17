@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/comments")
+@RequestMapping("/api")
 public class CommentController {
 
     @Autowired
@@ -18,9 +18,13 @@ public class CommentController {
     @Autowired
     private PostRepository postRepository;
 
-    // Create a comment
-    @PostMapping
-    public Comment createComment(@RequestParam Long userId, @RequestParam Long postId, @RequestBody Comment comment) {
+    // Endpoint: POST /api/posts/{postId}/comments?userId=1
+    @PostMapping("/posts/{postId}/comments")
+    public Comment createCommentForPost(
+        @PathVariable Long postId,
+        @RequestParam Long userId,
+        @RequestBody Comment comment
+    ) {
         User user = userRepository.findById(userId).orElse(null);
         Post post = postRepository.findById(postId).orElse(null);
         if (user == null || post == null) return null;
