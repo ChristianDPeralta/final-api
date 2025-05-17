@@ -1,7 +1,6 @@
 package com.peralta.socialmedia;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
@@ -13,12 +12,13 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Author is required")
+    // Author is optional
     private String author;
 
     @Size(max = 500, message = "Content can't exceed 500 characters")
     private String content;
 
+    @Column(length = 10000) // Allow imageUrl up to 10,000 characters
     private String imageUrl;
 
     private LocalDateTime timestamp;
