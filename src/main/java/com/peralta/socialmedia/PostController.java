@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,6 +30,20 @@ public class PostController {
         }
         post.setTimestamp(LocalDateTime.now());
         return repository.save(post);
+    }
+
+    // BULK CREATE ENDPOINT
+    @PostMapping("/bulk")
+    public List<Post> createPostsBulk(@Valid @RequestBody List<Post> posts) {
+        List<Post> result = new ArrayList<>();
+        for (Post post : posts) {
+            if (post.getAuthor() == null || post.getAuthor().trim().isEmpty()) {
+                post.setAuthor("Anonymous");
+            }
+            post.setTimestamp(LocalDateTime.now());
+            result.add(post);
+        }
+        return repository.saveAll(result);
     }
 
     @PutMapping("/{id}")
