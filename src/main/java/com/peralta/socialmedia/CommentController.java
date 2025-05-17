@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -18,7 +20,13 @@ public class CommentController {
     @Autowired
     private PostRepository postRepository;
 
-    // Endpoint: POST /api/posts/{postId}/comments?userId=1
+    @GetMapping("/posts/{postId}/comments")
+    public List<Comment> getCommentsForPost(@PathVariable Long postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post == null) return Collections.emptyList();
+        return commentRepository.findByPost(post);
+    }
+
     @PostMapping("/posts/{postId}/comments")
     public Comment createCommentForPost(
         @PathVariable Long postId,
