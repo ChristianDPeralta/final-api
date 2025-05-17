@@ -15,9 +15,6 @@ public class CommentController {
     private CommentRepository commentRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private PostRepository postRepository;
 
     @GetMapping("/posts/{postId}/comments")
@@ -30,13 +27,16 @@ public class CommentController {
     @PostMapping("/posts/{postId}/comments")
     public Comment createCommentForPost(
         @PathVariable Long postId,
-        @RequestParam Long userId,
         @RequestBody Comment comment
     ) {
-        User user = userRepository.findById(userId).orElse(null);
         Post post = postRepository.findById(postId).orElse(null);
-        if (user == null || post == null) return null;
-        comment.setUser(user);
+        if (post == null) return null;
+
+        // Set the author to "Anonymous" if not provided
+        if (comment.getAuthor() == null || comment.getAuthor().trim().isEmpty()) {
+            comment.setAuthor("Anonymous");
+        }
+
         comment.setPost(post);
         comment.setTimestamp(LocalDateTime.now());
         return commentRepository.save(comment);
