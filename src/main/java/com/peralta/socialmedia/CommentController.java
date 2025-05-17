@@ -1,44 +1,67 @@
 package com.peralta.socialmedia;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
+import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
 
-@RestController
-@RequestMapping("/api")
-public class CommentController {
+@Entity
+public class Comment {
 
-    @Autowired
-    private CommentRepository commentRepository;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Autowired
-    private PostRepository postRepository;
+    private String content;
 
-    @GetMapping("/posts/{postId}/comments")
-    public List<Comment> getCommentsForPost(@PathVariable Long postId) {
-        Post post = postRepository.findById(postId).orElse(null);
-        if (post == null) return Collections.emptyList();
-        return commentRepository.findByPost(post);
+    private String author; // <--- Add this field
+
+    private LocalDateTime timestamp;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    // ... any other fields, constructors, etc.
+
+    // --- GETTERS AND SETTERS ---
+    public Long getId() {
+        return id;
     }
 
-    @PostMapping("/posts/{postId}/comments")
-    public Comment createCommentForPost(
-        @PathVariable Long postId,
-        @RequestBody Comment comment
-    ) {
-        Post post = postRepository.findById(postId).orElse(null);
-        if (post == null) return null;
-
-        // Set the author to "Anonymous" if not provided
-        if (comment.getAuthor() == null || comment.getAuthor().trim().isEmpty()) {
-            comment.setAuthor("Anonymous");
-        }
-
-        comment.setPost(post);
-        comment.setTimestamp(LocalDateTime.now());
-        return commentRepository.save(comment);
+    public void setId(Long id) {
+        this.id = id;
     }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getAuthor() { // <--- Add this getter
+        return author;
+    }
+
+    public void setAuthor(String author) { // <--- Add this setter
+        this.author = author;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    // Add any other getters/setters if you have more fields
 }
